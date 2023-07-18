@@ -1,6 +1,5 @@
 #include <iostream>
-#include "matcher.h"
-#include "patient.h"
+#include "Patient.h"
 
 void test_patients() {
     Patient *p1 = new Patient(1, 1, 0, 0);
@@ -37,4 +36,9 @@ void test_patients() {
     p4->print_match();
     p5->print_match();
     p6->print_match();
+}
+
+int main() {
+    test_patients();
+    return 0;
 }

@@ -1,5 +1,5 @@
 #include <iostream>
-#include "patient.h"
+#include "Patient.h"
 
 Patient::Patient(int the_id, int the_group, float the_ps1, float the_ps2) : id{the_id}, 
             group{the_group}, p_score1{the_ps1}, p_score2{the_ps2}, is_matched{false},
