@@ -17,7 +17,7 @@ void Patient::set_is_matched(bool new_val) {
 }
 
 
-bool Patient::get_is_matched(){
+bool Patient::get_is_matched() const {
     return this->is_matched;
 }
 
@@ -34,16 +34,32 @@ void Patient::set_match(Patient* p1, Patient* p2) {
 }
 
 
-Patient* Patient::get_match1() {
+Patient* Patient::get_match1() const {
     return this->match1;
 }
 
-Patient* Patient::get_match2() {
+Patient* Patient::get_match2() const {
     return this->match2;
 }
 
+float Patient::get_p_score1() const {
+    return this->p_score1;
+}
 
-void Patient::print_match() {
+float Patient::get_p_score2() const {
+    return this->p_score2;
+}
+
+int Patient::get_id()const {
+    return this->id;
+}
+
+int Patient::get_group() const {
+    return this->group;
+}
+
+
+void Patient::print_match() const {
     if ((this->match1 == nullptr) or (this->match2 == nullptr)) {
         std::cout << "No match for " << this->id << std::endl;
     } else {

@@ -1,0 +1,11 @@
+Basic.txt is a very simple test case. We expect the final matches to be:
+1 2 3
+4 5 6
+7 8 9
+10 11 12
+
+Conflict.txt is a test where one of the matches will try to use an already matched patient.
+We expect final matches to be:
+7 2 3
+4 5 6
+1 8 9

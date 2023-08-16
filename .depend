@@ -1,0 +1,5 @@
+Patient.o: Patient.cc Patient.h
+Patient_KDTree.o: Patient_KDTree.cc Patient.h Patient_KDTree.h
+Matcher.o: Matcher.cc Patient_KDTree.h Patient.h Matcher.h \
+  KDTree/KDTree.hpp
+Testing.o: Testing.cc Patient.h

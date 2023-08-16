@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Patient.h"
+#include "Matcher.h"
 
 void test_patients() {
     Patient *p1 = new Patient(1, 1, 0, 0);
@@ -38,7 +39,34 @@ void test_patients() {
     p6->print_match();
 }
 
+void test_reading() {
+    Matcher *m = new Matcher();
+    std::string filename = "./data/sample.txt";
+    m->read_inputs(filename);
+    m->print_unmatched();
+}
+
+void test_matching() {
+    Matcher *m = new Matcher();
+    std::string filename = "./data/conflict.txt";
+    m->read_inputs(filename);
+    m->print_unmatched();
+    std::cout << "Building Initial Matches..." << std::endl;
+    m->build_best_match_list();
+    std::cout << "Setting Matches..." << std::endl;
+    std::vector<Match *> *final_match = m->match_from_list();
+
+    std::cout << "Final Matches:" << std::endl;
+    for (Match *m : *final_match)
+    {
+        std::cout << m->p1->get_id() << ' ' << m->p2->get_id() << ' ' << m->p3->get_id() << std::endl;
+    }
+}
+
 int main() {
-    test_patients();
+    //test_patients();
+    //test_reading();
+    test_matching();
     return 0;
 }
+

@@ -1,34 +1,46 @@
 # ********************************************************
 # Variables to control Makefile operation
 
-CXX = g++
-CXXFLAGS = -g -std=c++11 -Wall
-BIN=run_test
+CXX=g++
+CXXFLAGS=-std=c++14 -Wall -O -g -MMD -Werror=vla
+SOURCES=Patient.cc Patient_KDTree.cc Matcher.cc Testing.cc
+OBJECTS=${SOURCES:.cc=.o} # .o files depend upon .cc files with the same names
+DEPENDS=${OBJECTS:.o=.d}
+EXEC=test_exec
 
 # ********************************************************
 # Targets to bring the executable up to date
 
-SRC=$(wildcard *.cpp)
-OBJ=$(SRC:%.cpp=%.o)
+# First target in the makefile is the default target.
+# Note that the LIBFLAGS must come last in the command
+$(EXEC): $(OBJECTS)
+	echo $(SOURCES[0])
+	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $(EXEC)
 
-all: $(OBJ)
-	$(CXX) $(CXXFLAGS) -o $(BIN) $^
+%.o: %.cpp
+	$(CXX) -c -o $@ $< $(CXXFLAGS) 
 
-%.o: %.c
-	$(CXX) $(CXXFLAGS) $@ -c $<
+-include ${DEPENDS}
 
+.PHONY: clean
 clean:
-	rm -f *.o
-	rm $(BIN)
+	rm  -f $(OBJECTS) $(DEPENDS) $(EXEC)
 
-# testfile: Testing.o Patient.o Matcher.o
-# 	$(CC) Testing.o Patient.o Matcher.o -o Testing
+
+
+## OLD VERSION
+
+# test_exec: Testing.o Patient.o Matcher.o
+# 	$(CXX) $(CXXFLAGS) Testing.o Patient.o Matcher.o -o test_exec
 
 # Testing.o: testing.cpp Patient.h Matcher.h
-# 	$(CC) testing.cpp $(CFLAGS) -o Testing.o
-
-# Patient.o: Patient.h
-# 	$(CC) patient.cppb$(CFLAGS) -o Patient.o
+# 	$(CXX) $(CXXFLAGS) Testing.cpp  -o Testing.o
 
 # Matcher.o: Matcher.h Patient.h
-# 	$(CC) matcher.cpp $(CFLAGS) -o Matcher.o
+# 	$(CXX) $(CXXFLAGS) Matcher.cpp -o Matcher.o
+
+# Patient_KDTree.o: Patient_KDTree.h Patient.h
+# 	$(CXX) $(CXXFLAGS) Patient_KDTree.cpp -o Patient_KDTree.o
+
+# Patient.o: Patient.h
+# 	$(CC) Patient.cpp $(CFLAGS) -o Patient.o

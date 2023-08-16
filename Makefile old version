@@ -1,0 +1,28 @@
+CC=gcc
+CXX=g++
+RM=rm -f
+CPPFLAGS=-g -std=c++14 -Wall -O -MMD -v -Werror=vla
+LDFLAGS=-g -v
+LDLIBS=$(shell root-config --libs)
+
+SRCS=Patient.cc Patient_KDTree.cc Matcher.cc Testing.cc
+OBJS=$(subst .cc,.o,$(SRCS))
+
+all: tool
+
+tool: $(OBJS)
+	$(CXX) $(LDFLAGS) -o tool $(OBJS) $(LDLIBS)
+
+depend: .depend
+
+.depend: $(SRCS)
+	$(RM) ./.depend
+	$(CXX) $(CPPFLAGS) -MM $^>>./.depend;
+
+clean:
+	$(RM) $(OBJS)
+
+distclean: clean
+	$(RM) *~ .depend
+
+include .depend
