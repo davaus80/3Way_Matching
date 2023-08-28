@@ -95,7 +95,7 @@ Match Matcher::get_best_match_for_red(Patient* red_p) {
 } // Given a red patient, return best available match
 
 
-void Matcher::build_best_match_list() {
+void Matcher::build_best_match_list(bool verbose) {
     /*  go through red_vec, adding the best match tuple for each into a vector with an associated
         distance value for each (new data type?)
     */
@@ -104,9 +104,13 @@ void Matcher::build_best_match_list() {
    // Go through match list
    for (int i = 0; i < n; i++) {
      Match result = get_best_match_for_red(red_vec->at(i));
-     std::cout << result.dist << ' ' << result.p1->get_id() << ' ' << result.p2->get_id() << ' ' << result.p3->get_id() << std::endl;
+     if (verbose) {
+        std::cout << result.dist << ' ' << result.p1->get_id() << ' ' << result.p2->get_id() << ' ' << result.p3->get_id() << std::endl;
+     }
      match_list->insert(result);
-     std::cout << "Finished match list" << std::endl;
+     if (verbose) {
+        std::cout << "Finished match list" << std::endl;
+     }
    }
    // Sort from largest distance to smallest
    // std::sort(match_list->begin(), match_list->end(), match_cmp());

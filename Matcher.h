@@ -48,7 +48,7 @@ class Matcher {
       ~Matcher(); // Maybe we need custom destructor?
       void read_inputs(std::string file_name); // read inputs, create patients, and sort into respective slots
       Match get_best_match_for_red(Patient* red_p); // Given a red patient, return best available match
-      void build_best_match_list(); // Construct best match queue 
+      void build_best_match_list(bool verbose); // Construct best match queue 
       std::vector<Match> *match_from_list(); // Find best match for each red patient
       void print_unmatched() const;
       void print_match_list() const;

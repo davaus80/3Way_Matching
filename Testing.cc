@@ -52,7 +52,7 @@ void test_matching() {
     m->read_inputs(filename);
     m->print_unmatched();
     std::cout << "Building Initial Matches..." << std::endl;
-    m->build_best_match_list();
+    m->build_best_match_list(true);
     std::cout << "Setting Matches..." << std::endl;
     std::vector<Match> *final_match = m->match_from_list();
 
