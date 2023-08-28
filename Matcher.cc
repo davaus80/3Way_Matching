@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 #include <string>
 #include <fstream>
@@ -38,6 +39,9 @@ void Matcher::read_inputs(std::string file_name) {
     // ID / group / p score 1 / p score 2
     std::ifstream file;
     file.open(file_name); 
+    if (!file) {
+        throw std::invalid_argument("Could not read from file");
+    }
     std::string word;
     std::vector<int> group_counter = {0, 0, 0};
 
@@ -75,17 +79,17 @@ void Matcher::read_inputs(std::string file_name) {
 }
 
 
-Match *Matcher::get_best_match_for_red(Patient* red_p) {
+Match Matcher::get_best_match_for_red(Patient* red_p) {
     point blue_p = blue_kd_tree->nearest({red_p->get_p_score1(), red_p->get_p_score2(), red_p});
     point green_p = green_kd_tree->nearest({red_p->get_p_score1(), red_p->get_p_score2(), red_p});
-    Match *result = new Match(); 
-    result->p1 = red_p; 
-    result->p2 = blue_p.get_patient(); 
-    result->p3 = green_p.get_patient();
+    Match result = Match(); 
+    result.p1 = red_p; 
+    result.p2 = blue_p.get_patient(); 
+    result.p3 = green_p.get_patient();
     double blue_dist = blue_kd_tree->distance();
     double green_dist = green_kd_tree->distance();
     double other_dist = blue_p.distance(green_p);
-    result->dist = blue_dist + green_dist + other_dist;
+    result.dist = blue_dist + green_dist + other_dist;
 
     return result;
 } // Given a red patient, return best available match
@@ -96,11 +100,11 @@ void Matcher::build_best_match_list() {
         distance value for each (new data type?)
     */
    int n = red_vec->size();
-   match_list = new std::set<Match *>();
+   match_list = new std::multiset<Match>();
    // Go through match list
    for (int i = 0; i < n; i++) {
-     Match *result = get_best_match_for_red(red_vec->at(i));
-     std::cout << result->dist << ' ' << result->p1->get_id() << ' ' << result->p2->get_id() << ' ' << result->p3->get_id() << std::endl;
+     Match result = get_best_match_for_red(red_vec->at(i));
+     std::cout << result.dist << ' ' << result.p1->get_id() << ' ' << result.p2->get_id() << ' ' << result.p3->get_id() << std::endl;
      match_list->insert(result);
      std::cout << "Finished match list" << std::endl;
    }
@@ -110,36 +114,36 @@ void Matcher::build_best_match_list() {
 } // Construct best match list
 
 
-std::vector<Match *> *Matcher::match_from_list() {
+std::vector<Match> *Matcher::match_from_list() {
     // go through the list, matching if they're available, and finding a new match otherwise 
     // Should new match be matched or added to a place in the list based on distance?
 
     // final match list to return
-    std::vector<Match *> *final_match_list = new std::vector<Match *>();
+    std::vector<Match> *final_match_list = new std::vector<Match>();
 
     // loop through queue until it's empty
     while (!match_list->empty()) {
         // Get last (smallest) element and pop it from vector
-        Match *smallest_match = *(match_list->begin());
+        Match smallest_match = *(match_list->begin());
         match_list->erase(match_list->begin());
         // Check if all of its patients are unmatched
-        if ((!smallest_match->p1->get_is_matched()) && 
-            (!smallest_match->p2->get_is_matched()) && 
-            (!smallest_match->p3->get_is_matched())) {
+        if ((!smallest_match.p1->get_is_matched()) && 
+            (!smallest_match.p2->get_is_matched()) && 
+            (!smallest_match.p3->get_is_matched())) {
             // If yes set patients as matched
-            smallest_match->p1->set_is_matched(true);
-            smallest_match->p2->set_is_matched(true);
-            smallest_match->p3->set_is_matched(true);
+            smallest_match.p1->set_is_matched(true);
+            smallest_match.p2->set_is_matched(true);
+            smallest_match.p3->set_is_matched(true);
 
             // TODO: Find blue and green points in blue and green vecs, and remove them (maybe sort to speed this up?)
             for (auto f : *blue_set) {
-                if (f.get_patient()->get_id() == smallest_match->p2->get_id()) {
+                if (f.get_patient()->get_id() == smallest_match.p2->get_id()) {
                     blue_set->erase(f);
                     break;
                 }
             }
             for (auto f : *green_set) {
-                if (f.get_patient()->get_id() == smallest_match->p3->get_id()) {
+                if (f.get_patient()->get_id() == smallest_match.p3->get_id()) {
                     green_set->erase(f);
                     break;
                 }
@@ -164,7 +168,7 @@ std::vector<Match *> *Matcher::match_from_list() {
             green_kd_tree = new kdtree(green_set);
 
             // Get new match
-            Match *result = get_best_match_for_red(smallest_match->p1);
+            Match result = get_best_match_for_red(smallest_match.p1);
             
             // Add match to the appropriate spot in the vector for that match distance
             match_list->insert(result);
@@ -197,8 +201,8 @@ void Matcher::print_unmatched() const {
 
 void Matcher::print_match_list() const {
     std::cout << "Matches in Match List:" << std::endl;
-    for (Match *m : *match_list)
+    for (Match m : *match_list)
     {
-        std::cout << m->p1->get_id() << ' ' << m->p2->get_id() << ' ' << m->p3->get_id() << std::endl;
+        std::cout << m.p1->get_id() << ' ' << m.p2->get_id() << ' ' << m.p3->get_id() << std::endl;
     }
 }

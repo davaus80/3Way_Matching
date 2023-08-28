@@ -39,7 +39,7 @@ float point::get(size_t index) const
  */
 double point::distance(const point &pt) const
 {
-    double dist = 0;
+    double dist = 0; 
     for (size_t i = 0; i < 2; ++i)
     {
         double d = get(i) - pt.get(i);
@@ -76,7 +76,6 @@ kdtree::node *kdtree::make_tree(size_t begin, size_t end, size_t index)
     return &nodes_[n];
 }
 
-// TODO: CHANGE DISTANCE FUNCTION
 void kdtree::nearest(node *root, const point &point, size_t index)
 {
     if (root == nullptr)
