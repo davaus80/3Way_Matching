@@ -7,27 +7,27 @@
 
 class Patient {
     protected:
-      int id;
-      int group;
-      float p_score1;
+      int id; // Unique ID
+      int group; // red = 1, blue = 2, green = 3
+      float p_score1; // propensity score
       float p_score2;
-      bool is_matched;
-      Patient* match1;
-      Patient* match2;
+      bool is_matched; // indicates if this patient has been matched yet
+      Patient* match1; // First associated patient in match
+      Patient* match2; // Second associated patient in match -> TODO: Maybe could replace w pointer to match?
 
     public:
       Patient(int the_id, int the_group, float the_ps1, float the_ps2); // In the constructor, we divide the inputs into red, blue, and green groups and store in class fields
-      ~Patient(); // Maybe we need custom destructor?
-      void set_is_matched(bool new_val);
-      bool get_is_matched() const;
+      ~Patient();
+      void set_is_matched(bool new_val); // mutator
+      bool get_is_matched() const; // accessor
       void set_match(Patient* p1, Patient* p2); // Set the match for this Patient to the arguments
-      Patient *get_match1() const;
-      Patient *get_match2() const;
-      float get_p_score1() const;
-      float get_p_score2() const;
-      int get_id() const;
-      int get_group() const;
-      void print_match() const;
+      Patient *get_match1() const; // accessor
+      Patient *get_match2() const; // accessor
+      float get_p_score1() const; // accessor
+      float get_p_score2() const; // accessor
+      int get_id() const; // accessor
+      int get_group() const; // accessor
+      void print_match() const; // prints the match
 };
 
 #endif

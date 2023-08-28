@@ -10,6 +10,7 @@ int main(int argc, char *argv[]) {
 
     Matcher *m = new Matcher();
 
+    // Check if using verbose mode
     std::string filename = argv[1];
     std::string verb_option = "-v";
     bool verbose = false;

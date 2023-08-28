@@ -6,7 +6,7 @@ CXXFLAGS=-std=c++14 -Wall -O -g -MMD -Werror=vla
 SOURCES=Patient.cc Patient_KDTree.cc Matcher.cc Testing.cc main.cc
 OBJECTS=${SOURCES:.cc=.o} # .o files depend upon .cc files with the same names
 DEPENDS=${OBJECTS:.o=.d}
-EXEC=test_exec
+EXEC=3Way_Matching
 
 # ********************************************************
 # Targets to bring the executable up to date
