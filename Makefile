@@ -2,7 +2,7 @@
 # Variables to control Makefile operation
 
 CXX=g++
-CXXFLAGS=-std=c++14 -Wall -O -g -MMD -Werror=vla
+CXXFLAGS=-std=c++11 -Wall -O -g -MMD -Werror=vla
 SOURCES=Patient.cc Patient_KDTree.cc Matcher.cc Testing.cc main.cc
 OBJECTS=${SOURCES:.cc=.o} # .o files depend upon .cc files with the same names
 DEPENDS=${OBJECTS:.o=.d}
