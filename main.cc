@@ -1,21 +1,23 @@
 #include <iostream>
+#include <fstream>
 #include <exception>
 #include "Patient.h"
 #include "Matcher.h"
 
 int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        std::cerr << "Use format: ./prop_match [FILENAME] [-v for verbose mode]" << std::endl;
+    if (argc < 3) {
+        std::cerr << "Use format: ./prop_match [INPUT PATH] [OUTPUT PATH] [-v for verbose mode]" << std::endl;
     }
 
     Matcher *m = new Matcher();
 
     // Check if using verbose mode
     std::string filename = argv[1];
+    std::string output_file = argv[2];
     std::string verb_option = "-v";
     bool verbose = false;
-    if ((argc > 2)){
-        std::string option = argv[2];
+    if ((argc > 3)){
+        std::string option = argv[3];
         if (option.compare(verb_option) == 0) {
             std::cout << "Using verbose mode..." << std::endl;
             verbose = true;
@@ -23,6 +25,9 @@ int main(int argc, char *argv[]) {
     }
 
     // Read input from file
+    if (verbose) {
+        std::cout << "Reading inputs..." << std::endl;
+    }
     try {
         m->read_inputs(filename);
     } catch (...) {
@@ -45,9 +50,19 @@ int main(int argc, char *argv[]) {
     if (verbose) {
         std::cout << "Writing final matches to output..." << std::endl;
     }
+
+    // Try to open output file. If failure, write to prop_score_output.out
+    std::ofstream out_stream;
+    out_stream.open(output_file);
+    if (!out_stream) {
+        out_stream.close();
+        std::cout << "Could not open " << output_file << " Printing to ./prop_score_output.out" << std::endl;
+        out_stream.open("./prop_score_output.out");
+    }
+
     for (Match m : *final_match)
     {
-        std::cout << m.p1->get_id() << ' ' << m.p2->get_id() << ' ' << m.p3->get_id() << std::endl;
+        out_stream << m.p1->get_id() << ',' << m.p2->get_id() << ',' << m.p3->get_id() << std::endl;
     }
 
     return 0;

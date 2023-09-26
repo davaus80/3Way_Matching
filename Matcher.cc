@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 #include <vector>
 #include <string>
@@ -42,8 +43,10 @@ void Matcher::read_inputs(std::string file_name) {
     if (!file) {
         throw std::invalid_argument("Could not read from file");
     }
+
     std::string word;
     std::vector<int> group_counter = {0, 0, 0};
+    std::string line;
 
     // Load all patients into vectors for blue and green or list for red
     int red = 1;
@@ -52,14 +55,16 @@ void Matcher::read_inputs(std::string file_name) {
     green_set = new std::set<point>();
     red_vec = new std::vector<Patient *>();
 
-    while (file >> word) { // There should be four entries per row
+    while (std::getline(file, line)) {
+        std::stringstream line_stream(line);
+        std::getline(line_stream,word,',');
         int id = std::stoi(word);
-        file >> word;
+        std::getline(line_stream,word,',');
         int group = std::stoi(word);
         group_counter[group - 1] += 1;
-        file >> word;
+        std::getline(line_stream,word,',');
         float p_score1 = std::stof(word);
-        file >> word;
+        std::getline(line_stream,word,',');
         float p_score2 = std::stof(word);
         Patient *p = new Patient(id, group, p_score1, p_score2);
         point the_point = point(p->get_p_score1(), p->get_p_score2(), p);
