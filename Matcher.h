@@ -41,14 +41,15 @@ class Matcher {
       std::set<point> *green_set; // A set of green Patients still to be matched
       kdtree* green_kd_tree;
       kdtree* blue_kd_tree;
+      float caliper;
 
     public:
       Matcher(); // In the constructor, we divide the inputs into red, blue, and green groups and store in class fields
       ~Matcher();
-      void read_inputs(std::string file_name); // read inputs, create patients, and sort into respective slots
+      void read_inputs(std::string file_name, float caliper_coeff); // read inputs, create patients, and sort into respective slots
       Match get_best_match_for_red(Patient* red_p); // Given a red patient, return best available match
       void build_best_match_list(bool verbose); // Construct best match queue 
-      std::vector<Match> *match_from_list(float threshold); // Find best match for each red patient, maximum dist for a match is threshold
+      std::vector<Match> *match_from_list(); // Find best match for each red patient
       void print_unmatched() const; // Print all unmatched patients
       void print_match_list() const; // Print all match in the match list
 };

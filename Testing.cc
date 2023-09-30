@@ -42,19 +42,19 @@ void test_patients() {
 void test_reading() {
     Matcher *m = new Matcher();
     std::string filename = "./data/sample.txt";
-    m->read_inputs(filename);
+    m->read_inputs(filename, 0.6);
     m->print_unmatched();
 }
 
 void test_matching() {
     Matcher *m = new Matcher();
     std::string filename = "./tests/big_test.txt";
-    m->read_inputs(filename);
+    m->read_inputs(filename, 0.6);
     m->print_unmatched();
     std::cout << "Building Initial Matches..." << std::endl;
     m->build_best_match_list(true);
     std::cout << "Setting Matches..." << std::endl;
-    std::vector<Match> *final_match = m->match_from_list(0.25);
+    std::vector<Match> *final_match = m->match_from_list();
 
     std::cout << "Final Matches:" << std::endl;
     for (Match m : *final_match)

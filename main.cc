@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
         std::cout << "Reading inputs..." << std::endl;
     }
     try {
-        m->read_inputs(filename);
+        m->read_inputs(filename, threshold);
     } catch (...) {
         std::cerr << "An error occurred while reading from " << filename << std::endl;
         std::cerr << "Ensure that the file is a csv file formatted as ID / GROUP / PSCORE1 / PSCORE2 with types INT / INT [1-3] / DOUBLE / DOUBLE" << std::endl;
@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
     if (verbose) {
         std::cout << "Setting Matches..." << std::endl;
     }
-    std::vector<Match> *final_match = m->match_from_list(threshold);
+    std::vector<Match> *final_match = m->match_from_list();
 
     // Write matches to file
     if (verbose) {

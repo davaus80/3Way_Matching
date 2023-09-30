@@ -2,6 +2,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <vector>
+#include <cmath>
 #include <string>
 #include <fstream>
 #include "Patient_KDTree.h"
@@ -15,6 +16,7 @@ Matcher::Matcher() {
     green_set = nullptr;
     green_kd_tree = nullptr;
     blue_kd_tree = nullptr;
+    caliper = 0.0;
 } // In the constructor, we divide the inputs into red, blue, and green groups and store in class fields
 
 
@@ -34,8 +36,7 @@ Matcher::~Matcher() {
 
 } // Maybe we need custom destructor?
 
-
-void Matcher::read_inputs(std::string file_name) {
+void Matcher::read_inputs(std::string file_name, float caliper_coeff) {
     // Read patients from file. File is expected to have rows ordered as:
     // ID / group / p score 1 / p score 2
     std::ifstream file;
@@ -88,6 +89,35 @@ void Matcher::read_inputs(std::string file_name) {
         }
         p = nullptr;
     }
+
+    // Calculate caliper
+    // Get average of the p-score variances for each group
+    for (int i = 0; i < 3; i++) {
+        int N = vec_of_vecs[i]->size();
+        float p1_sum = 0.0;
+        float p2_sum = 0.0;
+        // get sum of each p_score for group
+        for (auto it = vec_of_vecs[i]->begin(); it < vec_of_vecs[i]->end(); it++) {
+            p1_sum += (*it)->get_p_score1();
+            p2_sum += (*it)->get_p_score2();
+        }
+        float p1_mean = p1_sum / N;
+        float p2_mean = p2_sum / N;
+        float p1_var = 0.0;
+        float p2_var = 0.0;
+        for (auto it = vec_of_vecs[i]->begin(); it < vec_of_vecs[i]->end(); it++) {
+            p1_var += std::pow((*it)->get_p_score1() - p1_mean, 2);
+            p2_var += std::pow((*it)->get_p_score2() - p2_mean, 2);
+        }
+        p1_var = p1_var / (N - 1);
+        p2_var = p2_var / (N - 1);
+
+        float group_var_avg = (p1_var + p2_var) / 2;
+        caliper += group_var_avg;
+
+    }
+    caliper = caliper_coeff * ::sqrt(caliper / 3);
+    std::cout << "Caliper is " << caliper << std::endl;
 
     // Find smallest group
     int smallest_group = 0;
@@ -165,7 +195,7 @@ void Matcher::build_best_match_list(bool verbose) {
    return;
 } // Construct best match list
 
-std::vector<Match> *Matcher::match_from_list(float threshold) {
+std::vector<Match> *Matcher::match_from_list() {
     // go through the list, matching if they're available, and finding a new match otherwise 
     // Should new match be matched or added to a place in the list based on distance?
 
@@ -177,10 +207,10 @@ std::vector<Match> *Matcher::match_from_list(float threshold) {
         // Get last (smallest) element and pop it from vector
         Match smallest_match = *(match_list->begin());
         match_list->erase(match_list->begin());
-        // Check if all of its patients are unmatched
-        if (smallest_match.dist > threshold) {
+        // Check if under caliper threshold
+        if (smallest_match.dist > caliper) {
             return final_match_list;
-        } else if ((!smallest_match.p1->get_is_matched()) && 
+        } else if ((!smallest_match.p1->get_is_matched()) && // Check if all of its patients are unmatched
             (!smallest_match.p2->get_is_matched()) && 
             (!smallest_match.p3->get_is_matched())) {
             // If yes set patients as matched
