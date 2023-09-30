@@ -38,6 +38,8 @@ public:
 
     Patient *get_patient() const;
 
+    void null_patient();
+
 private:
     Patient *patient_;
     std::array<float, 2> coords_;

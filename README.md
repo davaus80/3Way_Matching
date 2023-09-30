@@ -22,15 +22,19 @@ We will call this file `./data/example_data.csv` for the sake of illustration.
 
 We call the function like:
 
-`./3Way_Matching [./data/example_data.csv] [-v]`
+`./3Way_Matching ./data/example_data.csv ./output.csv -v`
 
-The `-v` verbose option is included if you want step-by-step printouts to indicate progress and matches as they happen.
+The `-v` verbose option is included if you want step-by-step printouts to indicate progress and matches as they happen. 
+
+If the input file ends in .csv, then commas will be used as the delimiter. Otherwise, whitespace will be used.
 
 ## Expected Outputs
 The expected output is a list of matches in order from smallest distance to largest. For example:
 
-`1 2 3`
+`1,2,3`
 
-`4 5 6`
+`4,5,6`
 
 If patients [1, 2, 3] were matched together with less distance than the other match which has patients [4, 5, 6]
+
+The output is printed to the specified output file.

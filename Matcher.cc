@@ -44,39 +44,82 @@ void Matcher::read_inputs(std::string file_name) {
         throw std::invalid_argument("Could not read from file");
     }
 
+    // If file ends in .csv, use commas as delimiter. Else use whitespace
+    char delimiter = ' ';
+    if (file_name.size() > 4) {
+        std::string csv_str = ".csv";
+        if (csv_str.compare(file_name.substr(file_name.size() - 4)) == 0) {
+            delimiter = ',';
+        }
+    }
+
     std::string word;
     std::vector<int> group_counter = {0, 0, 0};
     std::string line;
 
-    // Load all patients into vectors for blue and green or list for red
-    int red = 1;
-    int blue = 2;
-    blue_set = new std::set<point>();
-    green_set = new std::set<point>();
-    red_vec = new std::vector<Patient *>();
-
+    // Load all groups into sets then find smallest group and assign it as red
+    
+    std::vector<std::vector<Patient *> *> vec_of_vecs;
+    vec_of_vecs.push_back(new std::vector<Patient *>());
+    vec_of_vecs.push_back(new std::vector<Patient *>());
+    vec_of_vecs.push_back(new std::vector<Patient *>());
+    
     while (std::getline(file, line)) {
         std::stringstream line_stream(line);
-        std::getline(line_stream,word,',');
+        std::getline(line_stream,word,delimiter);
         int id = std::stoi(word);
-        std::getline(line_stream,word,',');
+        std::getline(line_stream,word,delimiter);
         int group = std::stoi(word);
         group_counter[group - 1] += 1;
-        std::getline(line_stream,word,',');
+        std::getline(line_stream,word,delimiter);
         float p_score1 = std::stof(word);
-        std::getline(line_stream,word,',');
+        std::getline(line_stream,word,delimiter);
         float p_score2 = std::stof(word);
         Patient *p = new Patient(id, group, p_score1, p_score2);
-        point the_point = point(p->get_p_score1(), p->get_p_score2(), p);
-        if (p->get_group() == red) {
-            red_vec->push_back(p);
-        } else if (p->get_group() == blue) {
-            blue_set->insert(the_point);
+        if (p->get_group() == 1) {
+            vec_of_vecs[0]->push_back(p);
+            group_counter[0] += 1;
+        } else if (p->get_group() == 2) {
+            vec_of_vecs[1]->push_back(p);
+            group_counter[1] += 1;
         } else {
-            green_set->insert(the_point);
+            vec_of_vecs[2]->push_back(p);
+            group_counter[2] += 1;
         }
         p = nullptr;
     }
+
+    // Find smallest group
+    int smallest_group = 0;
+    if (group_counter[1] < group_counter[0]) {
+        smallest_group = 1;
+    }
+    if (group_counter[2] < group_counter[smallest_group]) {
+        smallest_group = 2;
+    }
+
+    
+    // Move smallest group to red vector
+    red_vec = vec_of_vecs[smallest_group];
+    vec_of_vecs[smallest_group] = nullptr;
+    vec_of_vecs.erase(vec_of_vecs.begin() + smallest_group); // remove nullptr from vec of vecs
+
+    blue_set = new std::set<point>();
+    // Load all patients from one vector into sets for blue
+    for (auto it = vec_of_vecs[0]->begin(); it < vec_of_vecs[0]->end(); it++) {
+        point the_point = point((*it)->get_p_score1(), (*it)->get_p_score2(), *it);
+        blue_set->insert(the_point);
+        *it = nullptr;
+    }
+
+    green_set = new std::set<point>();
+    // Load all patients from one vector into sets for green
+    for (auto it = vec_of_vecs[1]->begin(); it < vec_of_vecs[1]->end(); it++) {
+        point the_point = point((*it)->get_p_score1(), (*it)->get_p_score2(), *it);
+        green_set->insert(the_point);
+        *it = nullptr;
+    }
+    
 
     // Create kd trees from vectors
     blue_kd_tree = new kdtree(blue_set);

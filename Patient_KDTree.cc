@@ -50,6 +50,8 @@ double point::distance(const point &pt) const
 
 Patient *point::get_patient() const { return patient_; }
 
+void point::null_patient() { patient_ = nullptr; }
+
 std::ostream& operator<<(std::ostream &out, const point &pt)
 {
     out << '(';
