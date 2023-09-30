@@ -54,7 +54,7 @@ void test_matching() {
     std::cout << "Building Initial Matches..." << std::endl;
     m->build_best_match_list(true);
     std::cout << "Setting Matches..." << std::endl;
-    std::vector<Match> *final_match = m->match_from_list();
+    std::vector<Match> *final_match = m->match_from_list(0.25);
 
     std::cout << "Final Matches:" << std::endl;
     for (Match m : *final_match)

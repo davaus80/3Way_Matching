@@ -28,6 +28,11 @@ The `-v` verbose option is included if you want step-by-step printouts to indica
 
 If the input file ends in .csv, then commas will be used as the delimiter. Otherwise, whitespace will be used.
 
+There is also a file threshold.in, which the program expects to be present in the same directory. If it isn't
+present or doesn't contain a valid value, the program defaults to using 0.25 as the caliper threshold for
+maximum match distance (that is, the sum of the distances between all points in the match). If you would
+like to use a different value, simply change the value in threshold.in
+
 ## Expected Outputs
 The expected output is a list of matches in order from smallest distance to largest. For example:
 

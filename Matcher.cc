@@ -165,8 +165,7 @@ void Matcher::build_best_match_list(bool verbose) {
    return;
 } // Construct best match list
 
-
-std::vector<Match> *Matcher::match_from_list() {
+std::vector<Match> *Matcher::match_from_list(float threshold) {
     // go through the list, matching if they're available, and finding a new match otherwise 
     // Should new match be matched or added to a place in the list based on distance?
 
@@ -179,7 +178,9 @@ std::vector<Match> *Matcher::match_from_list() {
         Match smallest_match = *(match_list->begin());
         match_list->erase(match_list->begin());
         // Check if all of its patients are unmatched
-        if ((!smallest_match.p1->get_is_matched()) && 
+        if (smallest_match.dist > threshold) {
+            return final_match_list;
+        } else if ((!smallest_match.p1->get_is_matched()) && 
             (!smallest_match.p2->get_is_matched()) && 
             (!smallest_match.p3->get_is_matched())) {
             // If yes set patients as matched
@@ -187,7 +188,6 @@ std::vector<Match> *Matcher::match_from_list() {
             smallest_match.p2->set_is_matched(true);
             smallest_match.p3->set_is_matched(true);
 
-            // TODO: Find blue and green points in blue and green vecs, and remove them (maybe sort to speed this up?)
             for (auto f : *blue_set) {
                 if (f.get_patient()->get_id() == smallest_match.p2->get_id()) {
                     blue_set->erase(f);
@@ -205,13 +205,6 @@ std::vector<Match> *Matcher::match_from_list() {
             final_match_list->push_back(smallest_match);
         } else {
             // If not, get best match from kd_tree 
-
-            // TODO: NEED TO FIX KDTREE SO THAT IT DOESNT USE ALREADY MATCHED POINTS
-            // Possible solution: update the green and blue vecs with each match, then
-            // when a new best match has an already matched point, rebuild the kdtrees
-            // using only the remaining points
-
-            // TODO: Replace blue and green vec with sets
 
             // Rebuild KD Trees with only unmatched nodes
             delete blue_kd_tree;

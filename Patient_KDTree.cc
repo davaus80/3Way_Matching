@@ -45,7 +45,7 @@ double point::distance(const point &pt) const
         double d = get(i) - pt.get(i);
         dist += d * d;
     }
-    return dist;
+    return std::sqrt(dist);
 }
 
 Patient *point::get_patient() const { return patient_; }
@@ -159,7 +159,7 @@ size_t kdtree::visited() const { return visited_; }
  * Returns the distance between the input point and return value
  * from the last call to nearest().
  */
-double kdtree::distance() const { return std::sqrt(best_dist_); }
+double kdtree::distance() const { return best_dist_; }
 
 /**
  * Finds the nearest point in the tree to the given point.

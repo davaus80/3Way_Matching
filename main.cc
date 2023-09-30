@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <exception>
 #include "Patient.h"
@@ -24,6 +25,31 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    // Default threshold is 0.25
+    float threshold = 0.25;
+    // Check for ./threshold.in
+    std::ifstream thres_stream;
+    std::string thres_file = "./threshold.in";
+    thres_stream.open(thres_file);
+    if (!thres_stream) {
+        thres_stream.close();
+        std::cout << "Could not open ./threshold.in. Using default value for threshold." << std::endl;
+    } else {
+        std::string line;
+        std::getline(thres_stream, line);
+        std::istringstream in(line);
+        std::string thres_str;
+        in >> thres_str;
+        try {
+            threshold = std::stof(thres_str);
+        } catch (...) {
+            std::cout << "Value in ./threshold.in is not a valid float. Using default value for threshold." << std::endl;
+        }
+        std::cout << "Using " << threshold << " as threshold." << std::endl;
+    }
+
+
+
     // Read input from file
     if (verbose) {
         std::cout << "Reading inputs..." << std::endl;
@@ -44,7 +70,7 @@ int main(int argc, char *argv[]) {
     if (verbose) {
         std::cout << "Setting Matches..." << std::endl;
     }
-    std::vector<Match> *final_match = m->match_from_list();
+    std::vector<Match> *final_match = m->match_from_list(threshold);
 
     // Write matches to file
     if (verbose) {
