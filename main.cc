@@ -7,7 +7,8 @@
 
 int main(int argc, char *argv[]) {
     if (argc < 3) {
-        std::cerr << "Use format: ./prop_match [INPUT PATH] [OUTPUT PATH] [-v for verbose mode]" << std::endl;
+        std::cerr << "Use format: ./3Way_Matching [INPUT PATH] [OUTPUT PATH] [-v for verbose mode]" << std::endl;
+        return 1;
     }
 
     Matcher *m = new Matcher();
