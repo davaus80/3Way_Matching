@@ -6,7 +6,7 @@ CXXFLAGS=-std=c++11 -Wall -O -g -MMD -Werror=vla
 SOURCES=Patient.cc Patient_KDTree.cc Matcher.cc Testing.cc main.cc
 OBJECTS=${SOURCES:.cc=.o} # .o files depend upon .cc files with the same names
 DEPENDS=${OBJECTS:.o=.d}
-EXEC=prop_match
+EXEC=3Way_matching
 
 # ********************************************************
 # Targets to bring the executable up to date
